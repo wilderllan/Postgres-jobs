@@ -1,0 +1,92 @@
+
+                      (Cosultas de trabalhos)
+
+. Consultar via SQL (para scripts ou relatórios)
+
+
+Você pode consultar o catálogo interno do PostgreSQL:
+
+SELECT grantee, privilege_type
+FROM information_schema.role_table_grants
+WHERE table_schema = 'public' AND table_name = 'documento';
+
+---------------------------------------------------------------------------------------------------------
+
+2. Ver permissões de uma tabela específica    
+
+ex:1- \z public.documento
+  
+ex:2-  \dp public.documento
+
+---------------------------------------------------------------------------------------------------------
+
+SELECT datname FROM pg_database WHERE datistemplate = false;
+
+
+--------------------------------------------------------------------------------------------------------
+
+🔹 Ver schemas do banco atual:
+
+
+SELECT schema_name FROM information_schema.schemata;
+
+
+----------------------------------------------------------------------------------------------------
+🔹 Ver todas as tabelas do schema public
+
+
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public' AND table_type = 'BASE TABLE';
+
+
+
+------------------------------------------------------------------------------------------------------
+🧩 2. Consultas sobre tabelas e coluna
+Ver estrutura de uma tabela
+
+\d public.nome_tabela
+
+
+-------------------------------------------------------------------------------------------------------
+
+🔹 Listar colunas com tipos de dados:
+
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'nome_tabela';
+
+-------------------------------------------------------------------------------------------------------
+🔹 Contar quantas linhas há em cada tabela:
+
+SELECT relname AS table_name, n_live_tup AS estimated_rows
+FROM pg_stat_user_tables
+ORDER BY n_live_tup DESC;
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+criaçao de usuario com senha                               rocky linux maqina local
+CREATE USER derlan WITH PASSWORD '07212628!';
+
+
+GRANT CONNECT ON DATABASE documentos TO derlan;
+
+login 07212628!
+
+psql -U derlan -d documentos -h 127.0.0.1 
+
+-------------------------------------------------------------------------------------------------------------------------
+permissoes
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO derlan;      >>>      # para agregar permissoes #
+
+REVOKE SELECT ON ALL TABLES IN SCHEMA public FROM derlan;   >>>      # para revogar permissoes #
+
+# ALL TABLES =todas as tabelas existentes
+
+# public = schema padrão
+
+# derlan = usuário que vai receber a permissão
+------------------------------------------------------------------------------------------------------------------------
