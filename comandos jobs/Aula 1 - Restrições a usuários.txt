@@ -1,0 +1,45 @@
+// Aula 1 - Restrições a usuários
+
+=# \du
+
+=# ALTER USER vitor NOLOGIN;
+
+=# \du
+
+=# ALTER USER vitor LOGIN;
+
+=# ALTER USER vitor CONNECTION LIMIT 0;
+
+=# ALTER USER vitor CONNECTION LIMIT 10;
+
+=# ALTER USER vitor CONNECTION LIMIT -1;
+
+=# SELECT pg_terminate_backend(pid) FROM pg_stat_activity a JOIN pg_roles r ON a.usename = r.rolname AND NOT rolcanlogin;
+
+https://www.postgresql.org/docs/current/sql-reassign-owned.html
+https://www.postgresql.org/docs/current/sql-drop-owned.html
+
+=# DROP ROLE vitor;
+
+=# REASSIGN OWNED BY vitor TO postgres;
+
+=# DROP OWNED BY vitor;
+
+=# DROP USER vitor;
+
+=# \du
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

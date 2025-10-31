@@ -1,0 +1,71 @@
+// Aula 10 - Implementando uma Row Level Security
+
+test=# \h CREATE POLICY
+
+test=# CREATE TABLE t_person (gender text, name text);
+
+test=# INSERT INTO t_person VALUES ('male', 'joe'),
+	('male', 'paul'),
+	('female', 'sarah'),
+	(NULL, 'R2-D2');
+
+test=# CREATE ROLE joe WITH LOGIN ENCRYPTED PASSWORD '123456';
+
+test=# GRANT ALL ON t_person TO joe;
+
+test=# ALTER TABLE t_person ENABLE ROW LEVEL SECURITY;
+
+test=> SELECT * FROM t_person;
+
+test=# CREATE POLICY joe_pol_1 ON t_person
+	FOR SELECT TO joe
+	USING (gender = 'male');
+
+test=> SELECT * FROM t_person;
+
+test=# \h ALTER POLICY
+
+test=# CREATE POLICY joe_pol_2 ON t_person
+	FOR SELECT TO joe
+	USING (gender IS NULL);
+
+test=> SELECT * FROM t_person;
+
+test=> explain SELECT * FROM t_person;
+
+test=> INSERT INTO t_person VALUES ('male', 'kaarel');
+
+test=# CREATE POLICY joe_pol_3 ON t_person
+	FOR INSERT TO joe
+	WITH CHECK (gender IN ('male', 'female'));
+
+test=> INSERT INTO t_person VALUES ('female', 'maria');
+
+test=> INSERT INTO t_person VALUES ('female', 'maria') RETURNING *;
+
+test=> INSERT INTO t_person VALUES ('male', 'max') RETURNING *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

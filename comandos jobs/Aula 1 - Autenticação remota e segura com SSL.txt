@@ -1,0 +1,100 @@
+// Aula 10 - Autenticação remota e segura com SSL
+
+Vamos fazer uma autenticação remota e segura com SSL:
+
+Vamos gerar os certificados SSL para o servidor PostgreSQL
+
+Para que o SSL funcione com o PostgreSQL, você precisa gerar três arquivos de certificado:
+
+server.key - Este é o arquivo da chave privada
+server.crt - Este é o arquivo de certificado do servidor
+root.crt - Este é o certificado raiz confiável
+
+Primeiro, altere o diretório para o diretório de dados do PostgreSQL, conforme mostrado.
+
+# cd /usr/local/pgsql/data/
+
+Durante a criação da chave privada, você será solicitado a fornecer uma frase-senha. Digite e confirme.
+
+Você pode confirmar mais tarde que a chave existe executando o comando:
+
+# openssl genrsa -aes128 2048 > server.key 
+
+# ls -l | grep server.key
+
+A chave privada tem uma frase-senha associada a ela. 
+
+No entanto, para usar essa chave posteriormente, você precisa remover a frase-senha. 
+
+Para fazer isso, execute o seguinte comando:
+
+# openssl rsa -in server.key -out server.key
+
+Aplicar as permissões necessárias e direitos de propriedade
+
+Para maior segurança, você precisa mudar o proprietário para o postgres e atribuir permissões somente leitura da chave privada ao usuário root, conforme mostrado.
+
+# chown postgres.postgres server.key
+# chmod 0400 server.key
+
+Criar arquivo de certificado do servidor
+
+Agora, gere um arquivo de certificado autoassinado com base na chave privada.
+
+O arquivo de certificado a seguir é válido por 365 dias.
+
+# openssl req -new -key server.key -days 365 -out server.crt -x509 
+
+Coloque os parâmetros que desejar.
+
+Como você está usando um certificado autoassinado, e será usado como certificado raiz confiável fazendo uma cópia do arquivo de certificado do servidor, conforme mostrado.
+
+# cp server.crt root.crt
+
+Configurar o PostgreSQL para usar SSL
+
+O próximo passo é configurar o PostgreSQL para usar SSL. 
+
+Acesse o arquivo de configuração 'postgresql.conf' que está localizado dentro do diretório data.
+
+# vim /usr/local/pgsql/data/postgresql.conf
+
+ssl = on
+ssl_ca_file = 'root.crt'
+ssl_cert_file = 'server.crt'
+ssl_crl_file = ''
+ssl_key_file = 'server.key'
+ssl_ciphers = 'HIGH:!aNULL' # allowed SSL ciphers
+ssl_prefer_server_ciphers = on
+
+Em "Connection Settings", localize o parâmetro "listen_addresses" e defina-o da seguinte maneira para permitir conexões de todos os hosts externos:
+
+listen_address = '*'
+
+Salve as alterações e saia do arquivo. 
+
+Em seguida, abra o arquivo de configuração 'pg_hba.conf'. 
+
+Este é o arquivo de configuração de autenticação do cliente PostgreSQL que especifica quais hosts têm permissão para se conectar e como os clientes são autenticados.
+
+# vim /usr/local/pgsql/data/pg_hba.conf
+
+# host all all 192.168.15.0/24 md5
+
+hostssl all all 192.168.15.0/24 password
+
+Agora, vamos dar um restart no daemon:
+
+# systemctl restart postgresql-16.service
+
+E agora, vamos aos testes, use um psql client remoto e acesse:
+
+# psql -h 192.168.15.170 -p 5432 -U postgres
+
+E veja a linha de conexão "SSL connection"
+
+Para descobrir se a conexão está realmente criptografada, precisamos verificar o conteúdo de pg_stat_ssl:
+
+postgres=# SELECT * FROM pg_stat_ssl;
+
+A conexão foi criptografada com sucesso. Se “ssl = true”, então tivemos sucesso.

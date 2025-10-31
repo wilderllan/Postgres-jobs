@@ -1,0 +1,10 @@
+➔ wget https://raw.githubusercontent.com/Mazuco/audit-trigger/master/audit.sql
+➔ psql -f audit.sql
+➔ pgbench -i
+➔ SELECT audit.audit_table('pgbench_accounts');
+➔ pgbench -t 1000
+➔ SELECT count(*) FROM audit.logged_actions;
+➔ \x on;
+➔ SELECT * FROM audit.logged_actions LIMIT 1;
+
+

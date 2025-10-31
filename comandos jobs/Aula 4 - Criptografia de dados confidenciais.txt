@@ -1,0 +1,23 @@
+// Aula 4 - Criptografia de dados confidenciais
+
+Troque para a versão de seu postgres! (Aqui esta com a versão 13!)
+
+gpg --gen-key (deixar a frase em branco!)
+gpg -a --export "vitor <vitor@teste.com>" > /var/lib/postgresql/13/public.key
+gpg -a --export-secret-keys "vitor <vitor@teste.com>" > /var/lib/postgresql/13/secret.key
+chgrp postgres /var/lib/postgresql/13/secret.key
+chgrp postgres /var/lib/postgresql/13/public.key
+chmod 440 /var/lib/postgresql/13/secret.key
+chmod 440 /var/lib/postgresql/13/public.key
+cd /var/lib/postgresql/13/
+ls -l *.key
+apt install postgresql-plpython3-12
+service postgresql restart
+su - postgres
+cat /var/lib/postgresql/13/public.key
+cat /var/lib/postgresql/13/secret.key
+psql
+
+
+
+

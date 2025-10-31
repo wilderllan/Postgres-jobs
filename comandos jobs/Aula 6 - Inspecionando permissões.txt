@@ -1,0 +1,50 @@
+// Aula 11 - Inspecionando permissões
+
+test=# GRANT ALL ON t_person TO joe;
+
+test=# \x
+
+test=# \z t_person
+
+test=# SELECT * FROM aclexplode('{joe=arwdDxt/postgres}');
+
+# git clone https://github.com/cybertec-postgresql/pg_permission.git
+
+# apt install make (se não tiver o comando make instalado)
+
+# make install
+
+sudo su - postgres
+
+psql
+
+\c test;
+
+test=# \d all_permissions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
