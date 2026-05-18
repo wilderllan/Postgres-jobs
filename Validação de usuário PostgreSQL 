@@ -1,0 +1,11 @@
+SELECT rolname, rolcanlogin
+FROM pg_roles
+WHERE rolnameF= ' nome do user';
+
+
+Validação do Hba.conf
+
+SELECT line_number, user_name, anddress, auto_method, error
+FROM pg_hba_file_rules
+WHERE user_name && ARRAY ['nome do user']
+ORDER BY line_numbee;
