@@ -1,6 +1,6 @@
 SELECT rolname, rolcanlogin
 FROM pg_roles
-WHERE rolnameF= ' nome do user';
+WHERE rolname = ' nome do user';
 
 
 Validação do Hba.conf
